@@ -74,7 +74,7 @@ df_filtered = df[
 # ==============================
 # TÍTULO
 # ==============================
-st.title("📊 Dashboard de Ventas - Supermarket Sales")
+st.title(" Dashboard de Ventas - Supermarket Sales")
 st.markdown("Explora el comportamiento de las ventas, productos y clientes mediante visualizaciones interactivas.")
 
 # ==============================
@@ -82,14 +82,14 @@ st.markdown("Explora el comportamiento de las ventas, productos y clientes media
 # ==============================
 col1, col2, col3 = st.columns(3)
 
-col1.metric("💰 Ventas Totales", f"${df_filtered['Total'].sum():,.0f}")
-col2.metric("📦 Transacciones", f"{len(df_filtered):,}")
-col3.metric("⭐ Rating Promedio", f"{df_filtered['Rating'].mean():.2f}")
+col1.metric(" Ventas Totales", f"${df_filtered['Total'].sum():,.0f}")
+col2.metric("Transacciones", f"{len(df_filtered):,}")
+col3.metric("Rating Promedio", f"{df_filtered['Rating'].mean():.2f}")
 
 # ==============================
-# 📈 ANÁLISIS TEMPORAL
+#  ANÁLISIS TEMPORAL
 # ==============================
-st.markdown("## 📈 Análisis Temporal")
+st.markdown("##  Análisis Temporal")
 
 df_time = df_filtered.groupby('Date')['Total'].sum().reset_index()
 
