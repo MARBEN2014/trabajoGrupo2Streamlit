@@ -185,7 +185,7 @@ with colB:
 # ==============================
 #  ANÁLISIS POR SUCURSAL
 # ==============================
-st.markdown("## 🏬 Análisis por Sucursal")
+st.markdown("## Análisis por Sucursal")
 
 # GRÁFICO 3
 df_grouped = df_filtered.groupby(['Branch_full', 'Product line'])['Total'].sum().reset_index()
