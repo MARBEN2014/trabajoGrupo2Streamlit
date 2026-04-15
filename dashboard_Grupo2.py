@@ -171,7 +171,7 @@ with colB:
         textprops={'fontsize': 9}
     )
 
-    centre_circle = plt.Circle((0,0),0.55,fc='white')
+    centre_circle = plt.Circle((0,0),0.40,fc='white')
     ax3.add_artist(centre_circle)
 
     ax3.set_title("Participación de ventas")
