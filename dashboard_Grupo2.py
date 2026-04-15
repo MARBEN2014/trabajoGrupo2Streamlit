@@ -5,9 +5,10 @@ import seaborn as sns
 import numpy as np
 
 # ==============================
-# CONFIGURACIÓN
+# CONFIGURACIÓN INICIAL
 # ==============================
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
+
 sns.set_theme(style="whitegrid")
 
 # ==============================
@@ -18,6 +19,7 @@ def load_data():
     df = pd.read_csv("data.csv")
     df['Date'] = pd.to_datetime(df['Date'])
 
+    # Mapear sucursales (UNA SOLA VEZ)
     branch_map = {
         'A': 'A - Yangon',
         'B': 'B - Mandalay',
@@ -30,35 +32,37 @@ def load_data():
 df = load_data()
 
 # ==============================
-# SIDEBAR
+# SIDEBAR (FILTROS)
 # ==============================
 st.sidebar.title("📊 Dashboard Supermarket Sales")
+st.sidebar.markdown("### 🔍 Filtros de exploración")
 
 branch = st.sidebar.multiselect(
-    "Sucursal",
-    df['Branch'].unique(),
+    "Selecciona sucursal",
+    sorted(df['Branch'].unique()),
     default=df['Branch'].unique()
 )
 
 product = st.sidebar.multiselect(
-    "Línea de producto",
-    df['Product line'].unique(),
+    "Selecciona línea de producto",
+    sorted(df['Product line'].unique()),
     default=df['Product line'].unique()
 )
 
 customer = st.sidebar.multiselect(
-    "Tipo de cliente",
-    df['Customer type'].unique(),
+    "Selecciona tipo de cliente",
+    sorted(df['Customer type'].unique()),
     default=df['Customer type'].unique()
 )
 
+# Filtro de fecha (PRO)
 date_range = st.sidebar.date_input(
     "Rango de fechas",
     [df['Date'].min(), df['Date'].max()]
 )
 
 # ==============================
-# FILTRO
+# FILTRADO
 # ==============================
 df_filtered = df[
     (df['Branch'].isin(branch)) &
@@ -70,7 +74,8 @@ df_filtered = df[
 # ==============================
 # TÍTULO
 # ==============================
-st.title("📊 Dashboard de Ventas")
+st.title("📊 Dashboard de Ventas - Supermarket Sales")
+st.markdown("Explora el comportamiento de las ventas, productos y clientes mediante visualizaciones interactivas.")
 
 # ==============================
 # MÉTRICAS
@@ -79,12 +84,12 @@ col1, col2, col3 = st.columns(3)
 
 col1.metric("💰 Ventas Totales", f"${df_filtered['Total'].sum():,.0f}")
 col2.metric("📦 Transacciones", f"{len(df_filtered):,}")
-col3.metric("⭐ Rating", f"{df_filtered['Rating'].mean():.2f}")
+col3.metric("⭐ Rating Promedio", f"{df_filtered['Rating'].mean():.2f}")
 
-# =========================================================
-# 📈 1. ANÁLISIS TEMPORAL (SOLO)
-# =========================================================
-st.markdown("## 📈 Evolución de ventas")
+# ==============================
+# 📈 ANÁLISIS TEMPORAL
+# ==============================
+st.markdown("## 📈 Análisis Temporal")
 
 df_time = df_filtered.groupby('Date')['Total'].sum().reset_index()
 
@@ -95,7 +100,7 @@ sns.lineplot(
     x='Date',
     y='Total',
     marker='o',
-    color="#1F77B4",
+    color="#279B0A",
     linewidth=2.5,
     ax=ax1
 )
@@ -103,13 +108,13 @@ sns.lineplot(
 ax1.fill_between(
     df_time['Date'],
     df_time['Total'],
-    color="#1F77B4",
-    alpha=0.2
+    color="#1F88D3",
+    alpha=0.3
 )
 
-ax1.set_title("Ventas en el tiempo", weight='bold')
+ax1.set_title("Evolución de las ventas totales en el tiempo", fontsize=14, weight='bold')
 ax1.set_xlabel("Fecha")
-ax1.set_ylabel("Ventas")
+ax1.set_ylabel("Ventas totales")
 
 plt.setp(ax1.get_xticklabels(), rotation=45)
 sns.despine()
@@ -117,140 +122,158 @@ sns.despine()
 fig1.tight_layout()
 st.pyplot(fig1)
 
-# =========================================================
-# 📊 2. GRID 2x2 GRÁFICOS
-# =========================================================
-st.markdown("## 📊 Análisis General")
+# ==============================
+# 📦 ANÁLISIS DE PRODUCTOS
+# ==============================
+st.markdown("## 📦 Análisis de Productos")
 
 colA, colB = st.columns(2)
 
-# ------------------------------
-# BARPLOT PRODUCTOS
-# ------------------------------
+# BARPLOT
 with colA:
     df_prod = df_filtered.groupby('Product line')['Total'].sum().reset_index()
-    df_prod = df_prod.sort_values('Total', ascending=False)
+    df_prod = df_prod.sort_values(by='Total', ascending=False)
 
-    fig2, ax2 = plt.subplots(figsize=(7,4))
+    fig2, ax2 = plt.subplots(figsize=(8,5))
     palette = sns.color_palette("crest", len(df_prod))
 
     sns.barplot(
         data=df_prod,
         x='Total',
         y='Product line',
+        hue='Product line',
         palette=palette,
+        legend=False,
         ax=ax2
     )
 
-    for i, v in enumerate(df_prod['Total']):
-        ax2.text(v, i, f'{v:.0f}', va='center')
-
-    ax2.set_title("Ventas por producto")
-    ax2.set_xlabel("")
+    ax2.set_title("Ventas por línea de producto", fontsize=13, weight='bold')
+    ax2.set_xlabel("Ventas")
     ax2.set_ylabel("")
-    sns.despine()
 
+    for i, value in enumerate(df_prod['Total']):
+        ax2.text(value, i, f' {value:.0f}', va='center')
+
+    sns.despine()
+    fig2.tight_layout()
     st.pyplot(fig2)
 
-# ------------------------------
-# DONUT CORREGIDO
-# ------------------------------
+# DONUT
 with colB:
     df_group = df_filtered.groupby('Product line')['Total'].sum()
+    colors = plt.cm.viridis(np.linspace(0.2, 0.9, len(df_group)))
 
-    fig3, ax3 = plt.subplots()
+    fig6, ax6 = plt.subplots()
 
-    colors = sns.color_palette("viridis", len(df_group))
-
-    wedges, texts, autotexts = ax3.pie(
+    wedges, texts, autotexts = ax6.pie(
         df_group,
         labels=df_group.index,
         autopct='%1.1f%%',
         startangle=140,
         colors=colors,
-        textprops={'fontsize': 9}
+        wedgeprops={'edgecolor': 'white'}
     )
 
-    centre_circle = plt.Circle((0,0),0.40,fc='white')
-    ax3.add_artist(centre_circle)
+    centre_circle = plt.Circle((0,0), 0.55, fc='white')
+    ax6.add_artist(centre_circle)
 
-    ax3.set_title("Participación de ventas")
-    ax3.axis('equal')
+    ax6.set_title("Participación de ventas", fontsize=13, weight='bold')
+    ax6.set_aspect('equal')
 
-    st.pyplot(fig3)
+    st.pyplot(fig6)
 
-# =========================================================
-# 🏬 3. SUCURSALES + PAGOS (2x2)
-# =========================================================
-st.markdown("## 🏬 Sucursales y Clientes")
+# ==============================
+# 🏬 ANÁLISIS POR SUCURSAL
+# ==============================
+st.markdown("## 🏬 Análisis por Sucursal")
 
-colC, colD = st.columns(2)
+# GRÁFICO 3
+df_grouped = df_filtered.groupby(['Branch_full', 'Product line'])['Total'].sum().reset_index()
 
-# ------------------------------
-# SUCURSALES
-# ------------------------------
-with colC:
-    df_branch = df_filtered.groupby('Branch_full')['Total'].sum().reset_index()
+order = df_filtered.groupby('Branch')['Total'].sum().sort_values(ascending=False).index
+branch_map = {'A': 'A - Yangon', 'B': 'B - Mandalay', 'C': 'C - Naypyitaw'}
+order = [branch_map[o] for o in order]
 
-    fig4, ax4 = plt.subplots(figsize=(7,4))
+fig3, ax3 = plt.subplots(figsize=(12,6))
 
-    sns.barplot(
-        data=df_branch,
-        x='Branch_full',
-        y='Total',
-        palette='viridis',
-        ax=ax4
-    )
+sns.barplot(
+    data=df_grouped,
+    x='Branch_full',
+    y='Total',
+    hue='Product line',
+    order=order,
+    palette='viridis',
+    ax=ax3
+)
 
-    for i, v in enumerate(df_branch['Total']):
-        ax4.text(i, v, f'{v:.0f}', ha='center')
+for container in ax3.containers:
+    ax3.bar_label(container, fmt='%.0f', padding=2)
 
-    ax4.set_title("Ventas por sucursal")
-    sns.despine()
+ax3.set_title("Rendimiento por sucursal y producto")
+ax3.legend(bbox_to_anchor=(1.02, 1), loc='upper left')
 
-    st.pyplot(fig4)
+fig3.tight_layout()
+st.pyplot(fig3)
 
-# ------------------------------
-# PAGOS
-# ------------------------------
-with colD:
-    fig5, ax5 = plt.subplots(figsize=(7,4))
+# GRÁFICO 4
+fig4, ax4 = plt.subplots(figsize=(10,5))
 
-    sns.countplot(
-        data=df_filtered,
-        x='Payment',
-        hue='Branch_full',
-        palette='viridis',
-        ax=ax5
-    )
+sns.countplot(
+    data=df_filtered,
+    x='Payment',
+    hue='Branch_full',
+    palette='viridis',
+    ax=ax4
+)
 
-    ax5.set_title("Métodos de pago")
-    ax5.legend(bbox_to_anchor=(1.02,1), loc='upper left')
+ax4.set_title("Preferencias de pago por sucursal")
+ax4.legend(bbox_to_anchor=(1.02, 1), loc='upper left')
 
-    sns.despine()
+sns.despine()
+fig4.tight_layout()
+st.pyplot(fig4)
 
-    st.pyplot(fig5)
+# ==============================
+# 👥 ANÁLISIS DE CLIENTES
+# ==============================
+st.markdown("## 👥 Análisis de Clientes")
 
-# =========================================================
-# 👥 4. BOXPLOT FINAL
-# =========================================================
-st.markdown("## 👥 Distribución de clientes")
+fig5, ax5 = plt.subplots(figsize=(8,5))
 
-fig6, ax6 = plt.subplots(figsize=(8,4))
+palette = {
+    'Normal': '#4C72B0',
+    'Member': '#55A868'
+}
 
 sns.boxplot(
     data=df_filtered,
     x='Customer type',
     y='Total',
+    order=['Normal', 'Member'],
     hue='Customer type',
-    palette={'Normal':'#4C72B0','Member':'#55A868'},
+    palette=palette,
     legend=False,
-    ax=ax6
+    ax=ax5
 )
 
-ax6.set_title("Ventas por tipo de cliente")
+ax5.set_title("Distribución de ventas por tipo de cliente")
 
 sns.despine()
-fig6.tight_layout()
+fig5.tight_layout()
 
-st.pyplot(fig6)
+st.pyplot(fig5)
+
+# ==============================
+# 🧠 REFLEXIÓN
+# ==============================
+st.markdown("## 🧠 Reflexión sobre interactividad")
+
+st.markdown("""
+El dashboard incorpora filtros interactivos por sucursal, línea de producto, tipo de cliente y rango de fechas.
+
+Estos elementos permiten segmentar dinámicamente la información, facilitando la comparación entre distintas dimensiones del negocio y la identificación de patrones específicos.
+
+El uso de filtros múltiples permite analizar combinaciones de variables, mientras que el control temporal permite observar la evolución de los datos en distintos periodos.
+
+En conjunto, estas herramientas transforman el dashboard en un sistema exploratorio, mejorando significativamente la comprensión de los datos frente a visualizaciones estáticas.
+""") 
