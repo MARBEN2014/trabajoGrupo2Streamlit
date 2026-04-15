@@ -34,7 +34,7 @@ df = load_data()
 # ==============================
 # SIDEBAR (FILTROS)
 # ==============================
-st.sidebar.title("📊 Dashboard Supermarket Sales")
+st.sidebar.title("Dashboard ")
 st.sidebar.markdown("### 🔍 Filtros de exploración")
 
 branch = st.sidebar.multiselect(
@@ -89,7 +89,7 @@ col3.metric(" Rating Promedio", f"{df_filtered['Rating'].mean():.2f}")
 # ==============================
 #  ANÁLISIS TEMPORAL
 # ==============================
-st.markdown("## 📈 Análisis Temporal")
+st.markdown("## Análisis Temporal")
 
 df_time = df_filtered.groupby('Date')['Total'].sum().reset_index()
 
@@ -125,7 +125,7 @@ st.pyplot(fig1)
 # ==============================
 #  ANÁLISIS DE PRODUCTOS
 # ==============================
-st.markdown("## 📦 Análisis de Productos")
+st.markdown("## Análisis de Productos")
 
 colA, colB = st.columns(2)
 
