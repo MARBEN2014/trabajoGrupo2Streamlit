@@ -74,20 +74,20 @@ df_filtered = df[
 # ==============================
 # TÍTULO
 # ==============================
-st.title("📊 Dashboard de Ventas - Supermarket Sales")
-st.markdown("Explora el comportamiento de las ventas, productos y clientes mediante visualizaciones interactivas.")
+st.title(" Dashboard de Cadena de Tiendas de Conveniencia")
+st.markdown("Explora el comportamiento de las ventas, productos y clientes.")
 
 # ==============================
 # MÉTRICAS
 # ==============================
 col1, col2, col3 = st.columns(3)
 
-col1.metric("💰 Ventas Totales", f"${df_filtered['Total'].sum():,.0f}")
-col2.metric("📦 Transacciones", f"{len(df_filtered):,}")
-col3.metric("⭐ Rating Promedio", f"{df_filtered['Rating'].mean():.2f}")
+col1.metric(" Ventas Totales", f"${df_filtered['Total'].sum():,.0f}")
+col2.metric(" Transacciones", f"{len(df_filtered):,}")
+col3.metric(" Rating Promedio", f"{df_filtered['Rating'].mean():.2f}")
 
 # ==============================
-# 📈 ANÁLISIS TEMPORAL
+#  ANÁLISIS TEMPORAL
 # ==============================
 st.markdown("## 📈 Análisis Temporal")
 
@@ -123,7 +123,7 @@ fig1.tight_layout()
 st.pyplot(fig1)
 
 # ==============================
-# 📦 ANÁLISIS DE PRODUCTOS
+#  ANÁLISIS DE PRODUCTOS
 # ==============================
 st.markdown("## 📦 Análisis de Productos")
 
@@ -183,7 +183,7 @@ with colB:
     st.pyplot(fig6)
 
 # ==============================
-# 🏬 ANÁLISIS POR SUCURSAL
+#  ANÁLISIS POR SUCURSAL
 # ==============================
 st.markdown("## 🏬 Análisis por Sucursal")
 
@@ -234,9 +234,9 @@ fig4.tight_layout()
 st.pyplot(fig4)
 
 # ==============================
-# 👥 ANÁLISIS DE CLIENTES
+#  ANÁLISIS DE CLIENTES
 # ==============================
-st.markdown("## 👥 Análisis de Clientes")
+st.markdown("##  Análisis de Clientes")
 
 fig5, ax5 = plt.subplots(figsize=(8,5))
 
@@ -264,9 +264,9 @@ fig5.tight_layout()
 st.pyplot(fig5)
 
 # ==============================
-# 🧠 REFLEXIÓN
+#  REFLEXIÓN
 # ==============================
-st.markdown("## 🧠 Reflexión sobre interactividad")
+st.markdown("##  Reflexión sobre interactividad")
 
 st.markdown("""
 El dashboard incorpora filtros interactivos por sucursal, línea de producto, tipo de cliente y rango de fechas.
