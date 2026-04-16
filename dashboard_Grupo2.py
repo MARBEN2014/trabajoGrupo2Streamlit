@@ -4,16 +4,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-# ==============================
+ 
 # CONFIGURACIÓN INICIAL
-# ==============================
+ 
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 sns.set_theme(style="whitegrid")
 
-# ==============================
+ 
 # CARGA DE DATOS
-# ==============================
+ 
 @st.cache_data
 def load_data():
     df = pd.read_csv("data.csv")
@@ -31,10 +31,10 @@ def load_data():
 
 df = load_data()
 
-# ==============================
+ 
 # SIDEBAR (FILTROS)
-# ==============================
-st.sidebar.title("Dashboard ")
+ 
+st.sidebar.title(" Dashboard Supermarket Sales")
 st.sidebar.markdown("### 🔍 Filtros de exploración")
 
 branch = st.sidebar.multiselect(
@@ -61,9 +61,9 @@ date_range = st.sidebar.date_input(
     [df['Date'].min(), df['Date'].max()]
 )
 
-# ==============================
+ 
 # FILTRADO
-# ==============================
+ 
 df_filtered = df[
     (df['Branch'].isin(branch)) &
     (df['Product line'].isin(product)) &
@@ -71,25 +71,25 @@ df_filtered = df[
     (df['Date'].between(pd.to_datetime(date_range[0]), pd.to_datetime(date_range[1])))
 ]
 
-# ==============================
+ 
 # TÍTULO
-# ==============================
-st.title(" Dashboard de Cadena de Tiendas de Conveniencia")
-st.markdown("Explora el comportamiento de las ventas, productos y clientes.")
+#
+st.title(" Dashboard de Ventas - Supermarket Sales")
+st.markdown("Explora el comportamiento de las ventas, productos y clientes mediante visualizaciones interactivas.")
 
-# ==============================
+
 # MÉTRICAS
-# ==============================
+
 col1, col2, col3 = st.columns(3)
 
-col1.metric(" Ventas Totales", f"${df_filtered['Total'].sum():,.0f}")
-col2.metric(" Transacciones", f"{len(df_filtered):,}")
-col3.metric(" Rating Promedio", f"{df_filtered['Rating'].mean():.2f}")
+col1.metric("💰 Ventas Totales", f"${df_filtered['Total'].sum():,.0f}")
+col2.metric("📦 Transacciones", f"{len(df_filtered):,}")
+col3.metric("⭐ Rating Promedio", f"{df_filtered['Rating'].mean():.2f}")
 
-# ==============================
-#  ANÁLISIS TEMPORAL
-# ==============================
-st.markdown("## Análisis Temporal")
+
+# ANÁLISIS TEMPORAL
+
+st.markdown("## 📈 Análisis Temporal")
 
 df_time = df_filtered.groupby('Date')['Total'].sum().reset_index()
 
@@ -122,14 +122,14 @@ sns.despine()
 fig1.tight_layout()
 st.pyplot(fig1)
 
-# ==============================
-#  ANÁLISIS DE PRODUCTOS
-# ==============================
-st.markdown("## Análisis de Productos")
+
+# ANÁLISIS DE PRODUCTOS
+
+st.markdown("## 📦 Análisis de Productos")
 
 colA, colB = st.columns(2)
 
-# BARPLOT
+
 with colA:
     df_prod = df_filtered.groupby('Product line')['Total'].sum().reset_index()
     df_prod = df_prod.sort_values(by='Total', ascending=False)
@@ -158,7 +158,7 @@ with colA:
     fig2.tight_layout()
     st.pyplot(fig2)
 
-# DONUT
+
 with colB:
     df_group = df_filtered.groupby('Product line')['Total'].sum()
     colors = plt.cm.viridis(np.linspace(0.2, 0.9, len(df_group)))
@@ -182,12 +182,12 @@ with colB:
 
     st.pyplot(fig6)
 
-# ==============================
-#  ANÁLISIS POR SUCURSAL
-# ==============================
-st.markdown("## Análisis por Sucursal")
+ 
+# 🏬 ANÁLISIS POR SUCURSAL
+ 
+st.markdown("##  Análisis por Sucursal")
 
-# GRÁFICO 3
+ 
 df_grouped = df_filtered.groupby(['Branch_full', 'Product line'])['Total'].sum().reset_index()
 
 order = df_filtered.groupby('Branch')['Total'].sum().sort_values(ascending=False).index
@@ -215,7 +215,7 @@ ax3.legend(bbox_to_anchor=(1.02, 1), loc='upper left')
 fig3.tight_layout()
 st.pyplot(fig3)
 
-# GRÁFICO 4
+ 
 fig4, ax4 = plt.subplots(figsize=(10,5))
 
 sns.countplot(
@@ -233,10 +233,10 @@ sns.despine()
 fig4.tight_layout()
 st.pyplot(fig4)
 
-# ==============================
-#  ANÁLISIS DE CLIENTES
-# ==============================
-st.markdown("##  Análisis de Clientes")
+
+# 👥 ANÁLISIS DE CLIENTES
+
+st.markdown("## 👥 Análisis de Clientes")
 
 fig5, ax5 = plt.subplots(figsize=(8,5))
 
@@ -263,9 +263,8 @@ fig5.tight_layout()
 
 st.pyplot(fig5)
 
-# ==============================
-#  REFLEXIÓN
-# ==============================
+# REFLEXIÓN
+
 st.markdown("##  Reflexión sobre interactividad")
 
 st.markdown("""
