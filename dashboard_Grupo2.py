@@ -34,7 +34,7 @@ df = load_data()
  
 # SIDEBAR (FILTROS)
  
-st.sidebar.title(" Dashboard Supermarket Sales")
+st.sidebar.title(" Dashboard Department Store")
 st.sidebar.markdown("### 🔍 Filtros de exploración")
 
 branch = st.sidebar.multiselect(
