@@ -34,7 +34,7 @@ df = load_data()
  
 # SIDEBAR (FILTROS)
  
-st.sidebar.title(" Dashboard Department Store")
+st.sidebar.title(" Dashboard Sales")
 st.sidebar.markdown("### 🔍 Filtros de exploración")
 
 branch = st.sidebar.multiselect(
@@ -174,7 +174,7 @@ with colB:
         wedgeprops={'edgecolor': 'white'}
     )
 
-    centre_circle = plt.Circle((0,0), 0.40, fc='white')
+    centre_circle = plt.Circle((0,0), 0.55, fc='white')
     ax6.add_artist(centre_circle)
 
     ax6.set_title("Participación de ventas", fontsize=13, weight='bold')
